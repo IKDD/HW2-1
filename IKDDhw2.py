@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#!/usr/local/bin/python3
 '''
 This is hw2 for class IKDD
 This homework is to scan query string and parse twitter data
@@ -5,8 +7,11 @@ Then print out matching text, its user_id, user_name
 '''
 import psycopg2
 import sys
-#from tabulate import tabulate
+import texttable
+from tabulate import tabulate
 
+reload(sys)  
+sys.setdefaultencoding('utf-8')
 #set the server database information
 config = {
 	'user' : 'hanklgs9564_user_4527',
@@ -23,19 +28,24 @@ SQLstring = "SELECT text, user_name, user_id FROM twitter WHERE q = \'" + query 
 try:
 	conn = psycopg2.connect(**config)
 except:
-	print "Unable to connect to the database."
+	print ("Unable to connect to the database.")
 cursor = conn.cursor()
 try:
 	cursor.execute(SQLstring)
 except:
-	print "Database error!."
+	print ("Database error!.")
 
 result = cursor.fetchall()
-print (result)
 
-print "///////////////////////////////////"
+table = texttable.Texttable()
+
+trans =[[]]
 for i in result:
-	print i[0],",,,,,,,,,,,,",i[1],",,,,,,,,,,",i[2]
+	trans.append([ i[0], i[1], '\''+i[2]+'\'' ])
+table.add_rows(trans)
+table.set_cols_align(['r','r','r'])
+table.header(['text', 'user_name', 'user_id'])
+print (table.draw())
 
 conn.close()
 cursor.close()
