@@ -8,7 +8,6 @@ Then print out matching text, its user_id, user_name
 import psycopg2
 import sys
 import texttable
-from tabulate import tabulate
 
 reload(sys)  
 sys.setdefaultencoding('utf-8')
@@ -34,18 +33,17 @@ try:
 	cursor.execute(SQLstring)
 except:
 	print ("Database error!.")
+result = cursor.fetchall() #get the SQL resulte
 
-result = cursor.fetchall()
-
-table = texttable.Texttable()
+table = texttable.Texttable() #to print out the table
 
 trans =[[]]
-for i in result:
+for i in result:	#put each SQL result to table
 	trans.append([ i[0], i[1], '\''+i[2]+'\'' ])
 table.add_rows(trans)
 table.set_cols_align(['r','r','r'])
-table.header(['text', 'user_name', 'user_id'])
-print (table.draw())
+table.header(['text', 'user_name', 'user_id'])	#set table header
+print (table.draw())	#print the table
 
 conn.close()
 cursor.close()
